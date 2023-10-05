@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    public GameObject Bullet;
     public float health = 100f;
 
     // Start is called before the first frame update
@@ -18,9 +19,18 @@ public class Enemy : MonoBehaviour
         
     }
 
-    public void TakeDamage()
+    public void TakeDamage(int damage)
     {
-        health = (health - damage);
+        Bullet bullet = GetComponent<Bullet>();
+        if (bullet != null)
+        {
+            health = (health - damage);
+            if (health <= 0)
+            {
+                Destroy(gameObject);
+            }
+        }
+        
 
     }
 }

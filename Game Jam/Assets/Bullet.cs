@@ -19,7 +19,8 @@ public class Bullet : MonoBehaviour
 		if (hitInfo.CompareTag("Enemy"))
 		{
 			Enemy enemy = hitInfo.GetComponent<Enemy>();
-			if (enemy != null){
+			if (enemy != null)
+			{
 				enemy.TakeDamage(damage);
 			}
 		}

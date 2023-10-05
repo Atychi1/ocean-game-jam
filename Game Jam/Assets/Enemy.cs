@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public GameObject Bullet;
     public float health = 100f;
 
     // Start is called before the first frame update

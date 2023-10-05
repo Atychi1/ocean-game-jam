@@ -1,63 +1,116 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Movement2 : MonoBehaviour
 {
+    //i changed the movement script entirely to make the dash a little better
+    //if you dont like it you can just change it back :)
 
-    public Rigidbody2D rb2D;
-    static bool Space = true;
-    public float moveSpeed = 0.1f;
-    
+    private float horizontal;
+    private float speed = 8f;
+    private float jumpingPower = 16f;
+    private bool isFacingRight = true;
+    public GameObject bulletPrefab;
 
-        private void Update()
+    private bool canDash = true;
+    private bool isDashing;
+    private float dashingPower = 24f;
+    private float dashingTime = 0.2f;
+    private float dashingCooldown = 1f;
+
+    [SerializeField] private Rigidbody2D rb;
+
+    private void Update()
+    {
+        if (isDashing)
         {
-            if (Input.GetKey("a"))
-            {
-                rb2D.AddForce(new Vector2(-moveSpeed, 0f));
-                
-            }
+            return;
+        }
 
-            if (Input.GetKey("d"))
-            {
-                rb2D.AddForce(new Vector2 (moveSpeed, 0f));
-                
-            }
+        horizontal = Input.GetAxisRaw("Horizontal");
 
-		if (Input.GetKey("w"))
-            {
-                rb2D.AddForce(new Vector2 (0f, moveSpeed));
-                
-            }
+        if (Input.GetButtonDown("Jump"))
+        {
+            rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
+        }
 
-		if (Input.GetKey("s"))
-            {
-                rb2D.AddForce(new Vector2 (0f, -moveSpeed));
-               
-            }
+        if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
+        }
 
-		if (Input.GetKeyDown("space") && Space)
-	    {
-		StartCoroutine(Dash());
-		StartCoroutine(Cooldown());
-  	    }
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            StartCoroutine(Dash());
+        }
 
-		
-	}
+        if (Input.GetMouseButtonDown(0))
+        {
+            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            FireBullet(mousePos);
+        }
 
+        Flip();
+    }
 
-	IEnumerator Dash()
-	    {
-		moveSpeed += 2f;
-		yield return new WaitForSeconds(0.5f);
-		moveSpeed -= 2f;
-	    
- 	    }
+    private void FixedUpdate()
+    {
+        if (isDashing)
+        {
+            return;
+        }
 
-	IEnumerator Cooldown()
-	{
-	  Space = false;
-	  yield return new WaitForSeconds(1.5f);
-	  Space = true;
-	}
+        rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+    }
+
+   
+
+    private IEnumerator Dash()
+    {
+        canDash = false;
+        isDashing = true;
+        float originalGravity = rb.gravityScale;
+        rb.gravityScale = 0f;
+        rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
+    
+        yield return new WaitForSeconds(dashingTime);
+
+        rb.gravityScale = originalGravity;
+        isDashing = false;
+        yield return new WaitForSeconds(dashingCooldown);
+        canDash = true;
+    }
+
+    private void Flip()
+    {
+        if (isFacingRight && horizontal < 0f || !isFacingRight && horizontal > 0f)
+        {
+            Vector3 localScale = transform.localScale;
+            isFacingRight = !isFacingRight;
+            localScale.x *= -1f;
+            transform.localScale = localScale;
+        }
+    }
+    private void FireBullet(Vector3 targetPosition)
+    {
+        GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
+        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Debug.Log(mousePos);
+        Bullet bulletScript = bullet.GetComponent<Bullet>();
+
+        if (bulletScript != null)
+        {
+            float speed = bulletScript.speed;
+            Vector2 myPosition = transform.position;
+            Vector2 direction = (mousePos - myPosition).normalized;
+            bullet.GetComponent<Rigidbody2D>().velocity = direction * speed;
+        }
+        
+        
+    }
 }
+
+
+

@@ -9,6 +9,7 @@ public class Movement2 : MonoBehaviour
     //if you dont like it you can just change it back :)
 
     private float horizontal;
+    private float vertical;  // Added vertical movement
     private float speed = 8f;
     private float jumpingPower = 16f;
     private bool isFacingRight = true;
@@ -20,6 +21,9 @@ public class Movement2 : MonoBehaviour
     private float dashingTime = 0.2f;
     private float dashingCooldown = 1f;
 
+    public float fireRate = 0.5f;  // Time between shots in seconds
+    private float nextFireTime = 0f;
+
     [SerializeField] private Rigidbody2D rb;
 
     private void Update()
@@ -30,27 +34,20 @@ public class Movement2 : MonoBehaviour
         }
 
         horizontal = Input.GetAxisRaw("Horizontal");
+        vertical = Input.GetAxisRaw("Vertical");  // Added vertical movement
 
-        if (Input.GetButtonDown("Jump"))
-        {
-            rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
-        }
-
-        if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
-        }
-
-        if (Input.GetKeyDown(KeyCode.LeftShift))
+        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
         {
             StartCoroutine(Dash());
         }
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && Time.time >= nextFireTime)
         {
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            FireBullet(mousePos);
+            FireBullet(mousePos, 5, 30f);
+            nextFireTime = Time.time + 1f / fireRate;  // Update the next allowed fire time
         }
+
 
         Flip();
     }
@@ -62,10 +59,8 @@ public class Movement2 : MonoBehaviour
             return;
         }
 
-        rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+        rb.velocity = new Vector2(horizontal * speed, vertical * speed);  // adjusted movement for vertical movement
     }
-
-   
 
     private IEnumerator Dash()
     {
@@ -74,7 +69,7 @@ public class Movement2 : MonoBehaviour
         float originalGravity = rb.gravityScale;
         rb.gravityScale = 0f;
         rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
-    
+
         yield return new WaitForSeconds(dashingTime);
 
         rb.gravityScale = originalGravity;
@@ -93,22 +88,23 @@ public class Movement2 : MonoBehaviour
             transform.localScale = localScale;
         }
     }
-    private void FireBullet(Vector3 targetPosition)
-    {
-        GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
-        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Debug.Log(mousePos);
-        Bullet bulletScript = bullet.GetComponent<Bullet>();
 
-        if (bulletScript != null)
+    private void FireBullet(Vector3 targetPosition, int numBullets, float spreadAngle)
+    {
+        for (int i = 0; i < numBullets; i++)
         {
-            float speed = bulletScript.speed;
-            Vector2 myPosition = transform.position;
-            Vector2 direction = (mousePos - myPosition).normalized;
-            bullet.GetComponent<Rigidbody2D>().velocity = direction * speed;
+            float bulletAngle = -(spreadAngle / 2) + (i * (spreadAngle / (numBullets - 1)));
+            Vector2 bulletDirection = Quaternion.Euler(0f, 0f, bulletAngle) * (targetPosition - (Vector3)transform.position).normalized;
+
+            GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
+            Bullet bulletScript = bullet.GetComponent<Bullet>();
+
+            if (bulletScript != null)
+            {
+                float speed = bulletScript.speed;
+                bullet.GetComponent<Rigidbody2D>().velocity = bulletDirection * speed;
+            }
         }
-        
-        
     }
 }
 

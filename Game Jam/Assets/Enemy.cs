@@ -1,15 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public float health = 100f;
+    public static event Action<Enemy> OnEnemyKilled; //this makes a fun counter that shows you when the enemy's killed!
+    [SerializeField] float health, maxHealth = 100f;
+
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
+        health = maxHealth;
     }
 
     // Update is called once per frame
@@ -18,16 +21,14 @@ public class Enemy : MonoBehaviour
         
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
-        Bullet bullet = GetComponent<Bullet>();
-        if (bullet != null)
+        health -= damage;
+
+        if (health <= 0)
         {
-            health = (health - damage);
-            if (health <= 0)
-            {
-                Destroy(gameObject);
-            }
+            Destroy(gameObject);
+            OnEnemyKilled?.Invoke(this);
         }
         
 

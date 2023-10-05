@@ -7,28 +7,33 @@ public class Bullet : MonoBehaviour
   public float speed = 20f;
 	public int damage = 40;
 	public Rigidbody2D rb;
-	public GameObject impactEffect;
+    public float maxLifeTime = 1.0f;
+
     public Transform firePoint;
+    private void Start()
+    {
+        Destroy(gameObject, maxLifeTime);  // Destroy the bullet after the specified time
+    }
 
-    // Use this for initialization
-    //public void Start () 
-	//{
-	//	rb.velocity = transform.right * speed;
-	//}
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Enemy"))
+        {
+            Enemy enemy = collision.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                enemy.TakeDamage(damage);
+            }
+        }
 
-	void OnTriggerEnter2D (Collider2D hitInfo)
-	{
-		if (hitInfo.CompareTag("Enemy"))
-		{
-			Enemy enemy = hitInfo.GetComponent<Enemy>();
-			if (enemy != null)
-			{
-				enemy.TakeDamage(damage);
-			}
-		}
+        // Ignore collisions with the player
+        if (collision.CompareTag("Player"))
+            return;
 
-		Instantiate(impactEffect, transform.position, transform.rotation);
+        Destroy(gameObject);
+    }
 
-		Destroy(gameObject);
-	}
+
+
+
 }

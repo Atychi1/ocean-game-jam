@@ -9,7 +9,7 @@ public class Bullet : MonoBehaviour
 	public Rigidbody2D rb;
     public float maxLifeTime = 1.0f;
 
-    public Transform firePoint;
+
     private void Start()
     {
         Destroy(gameObject, maxLifeTime);  // Destroy the bullet after the specified time

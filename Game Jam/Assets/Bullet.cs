@@ -28,7 +28,10 @@ public class Bullet : MonoBehaviour
 
         // Ignore collisions with the player
         if (collision.CompareTag("Player"))
+        {
             return;
+        }
+            
 
         Destroy(gameObject);
     }

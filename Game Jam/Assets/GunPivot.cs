@@ -60,6 +60,8 @@ public class GunPivot : MonoBehaviour
             GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
             Bullet bulletScript = bullet.GetComponent<Bullet>();
 
+            bullet.layer = LayerMask.NameToLayer("Player");
+
             if (bulletScript != null)
             {
                 float speed = bulletScript.speed;

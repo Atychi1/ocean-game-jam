@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class PlayerHealth : MonoBehaviour
@@ -8,12 +9,12 @@ public class PlayerHealth : MonoBehaviour
     public float maxHealth = 100f;
     public float health;
 
-    public TextMeshProUGUI healthText; // Reference to the TextMeshPro component
+    public Image healthBar;
 
     void Start()
     {
         health = maxHealth;
-        UpdateHealthText(); // Update the health text on start
+        UpdateHealth(); // Update the health text on start
     }
 
     public void DecreaseHealth(float damage)
@@ -26,15 +27,12 @@ public class PlayerHealth : MonoBehaviour
             Destroy(gameObject);
         }
 
-        UpdateHealthText(); // Update the health text whenever health changes
+        UpdateHealth(); // Update the health text whenever health changes
     }
 
-    private void UpdateHealthText()
+    private void UpdateHealth()
     {
-        if (healthText != null)
-        {
-            healthText.text = "Health: " + health.ToString();
-        }
+        healthBar.fillAmount = health / 100f;
     }
 
     private void DestroyObjectsInSameLayer()
@@ -53,7 +51,7 @@ public class PlayerHealth : MonoBehaviour
     public void IncreaseHealth(float amount)
     {
         health = Mathf.Min(health + amount, maxHealth);
-        UpdateHealthText();
+        UpdateHealth();
     }
 }
 

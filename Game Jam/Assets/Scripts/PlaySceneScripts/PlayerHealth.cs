@@ -6,7 +6,7 @@ using TMPro;
 public class PlayerHealth : MonoBehaviour
 {
     public float maxHealth = 100f;
-    private float health;
+    public float health;
 
     public TextMeshProUGUI healthText; // Reference to the TextMeshPro component
 
@@ -49,6 +49,11 @@ public class PlayerHealth : MonoBehaviour
                 Destroy(obj);
             }
         }
+    }
+    public void IncreaseHealth(float amount)
+    {
+        health = Mathf.Min(health + amount, maxHealth);
+        UpdateHealthText();
     }
 }
 

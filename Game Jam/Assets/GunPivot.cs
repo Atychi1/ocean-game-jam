@@ -14,6 +14,9 @@ public class GunPivot : MonoBehaviour
     public float fireRate = 0.5f;  // Time between shots in seconds
     private float nextFireTime = 0f;
 
+    public float PlayerHealth = 100f;
+    
+
     private void Update()
     {
         RotateGun();
@@ -45,7 +48,7 @@ public class GunPivot : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && Time.time >= nextFireTime)
         {
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            FireBullet(mousePos, 5, 30f);
+            FireBullet(mousePos, 7,30f);
             nextFireTime = Time.time + 1f / fireRate;  // Update the next allowed fire time
         }
     }
@@ -69,5 +72,7 @@ public class GunPivot : MonoBehaviour
             }
         }
     }
+
+    
 
 }

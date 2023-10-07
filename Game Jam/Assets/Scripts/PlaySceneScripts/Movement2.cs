@@ -11,7 +11,7 @@ public class Movement2 : MonoBehaviour
     private float horizontal;
     private float vertical;  // Added vertical movement
     private float speed = 8f;
-    private float jumpingPower = 16f;
+
     private bool isFacingRight = true;
     
 
@@ -19,7 +19,7 @@ public class Movement2 : MonoBehaviour
     private bool isDashing;
     private float dashingPower = 24f;
     private float dashingTime = 0.2f;
-    private float dashingCooldown = 1f;
+    private float dashingCooldown = .5f;
 
     
 

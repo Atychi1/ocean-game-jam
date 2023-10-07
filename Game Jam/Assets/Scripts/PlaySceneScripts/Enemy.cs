@@ -8,7 +8,7 @@ public class Enemy : MonoBehaviour
     public static event Action<Enemy> OnEnemyKilled; // This makes a fun counter that shows you when the enemy's killed!
     [SerializeField] float health, maxHealth = 100f;
     public LayerMask layerMask;
-    private float damageInterval = 0.5f;
+    private float damageInterval = 0.2f;
     public float damage = 5f;
 
     public PlayerHealth playerHealth;

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class GunPivot : MonoBehaviour
@@ -15,12 +16,23 @@ public class GunPivot : MonoBehaviour
     private float nextFireTime = 0f;
 
     public float PlayerHealth = 100f;
-    
+
+    public int maxAmmo = 30;  
+    public int currentAmmo;  
+
+    public TextMeshProUGUI ammoText;
+
+    private void Start()
+    {
+        currentAmmo = maxAmmo;
+        UpdateAmmoUI();
+    }
 
     private void Update()
     {
         RotateGun();
         PlayerInput();
+
     }
 
     void RotateGun()
@@ -45,11 +57,13 @@ public class GunPivot : MonoBehaviour
 
     void PlayerInput() 
     {
-        if (Input.GetMouseButtonDown(0) && Time.time >= nextFireTime)
+        if (Input.GetMouseButtonDown(0) && Time.time >= nextFireTime && currentAmmo > 0)
         {
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             FireBullet(mousePos, 7,30f);
             nextFireTime = Time.time + 1f / fireRate;  // Update the next allowed fire time
+            currentAmmo--;  // Reduce ammo
+            UpdateAmmoUI();
         }
     }
 
@@ -72,7 +86,14 @@ public class GunPivot : MonoBehaviour
             }
         }
     }
+    public void UpdateAmmoUI()
+    {
+        if (ammoText != null)
+        {
+            ammoText.text = "Ammo: " + currentAmmo;
+        }
+    }
 
-    
+
 
 }

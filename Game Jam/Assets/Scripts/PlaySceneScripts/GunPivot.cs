@@ -75,9 +75,11 @@ public class GunPivot : MonoBehaviour
             Vector2 bulletDirection = Quaternion.Euler(0f, 0f, bulletAngle) * (targetPosition - (Vector3)transform.position).normalized;
 
             GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity);
-            Bullet bulletScript = bullet.GetComponent<Bullet>();
 
-            bullet.layer = LayerMask.NameToLayer("Player");
+            // Set the layer of the bullet
+            bullet.layer = LayerMask.NameToLayer("Bullet");
+
+            Bullet bulletScript = bullet.GetComponent<Bullet>();
 
             if (bulletScript != null)
             {

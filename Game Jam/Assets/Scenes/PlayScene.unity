@@ -824,7 +824,7 @@ MonoBehaviour:
   rotateOverTime: 1
   rotationSpeed: 14.5
   hasMaxDistance: 1
-  maxDistnace: 20
+  maxDistnace: 10
   launchToPoint: 1
   launchType: 1
   launchSpeed: 5
